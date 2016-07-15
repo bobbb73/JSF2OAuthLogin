@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+		>
+
+<h:head></h:head>
+<f:metadata>
+	<f:viewParam id="code" name="code" value="#{yalogin.code}" />
+	<f:viewParam id="error" name="error" value="#{yalogin.error}" />
+	<f:viewParam id="state" name="state" value="#{yalogin.state}" />
+	<f:event type="preRenderView" listener="#{yalogin.phase2()}" />
+</f:metadata>
+<body> 
+
+</body> 
+</html>
