@@ -114,12 +114,18 @@ public class FBLogin implements OAuthProvider {
         FB fb = new FB();
 		JsonReader jsonReader = Json.createReader(new StringReader(json));
 		JsonObject jsonObject = jsonReader.readObject();
-		fb.first_name = jsonObject.getString("first_name");
-        fb.last_name = jsonObject.getString("last_name");
+		fb.id = jsonObject.getString("id");
         fb.name = jsonObject.getString("name");
-        fb.id = jsonObject.getString("id");
-        fb.link = jsonObject.getString("link");
-        return fb;
+		try {
+			fb.link = jsonObject.getString("link");
+			fb.first_name = jsonObject.getString("first_name");
+			fb.last_name = jsonObject.getString("last_name");
+		} catch (Throwable th){
+			if (logger.isLoggable(Level.FINE)) logger.log(Level.FINE,"", th);
+		}
+		if (fb.link==null)
+			fb.link = "https://www.facebook.com/app_scoped_user_id/"+fb.id+"/";
+		return fb;
     }
 
     protected Map<String,String> parse(String str){
