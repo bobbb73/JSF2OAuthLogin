@@ -128,14 +128,13 @@ public class FBLogin implements OAuthProvider {
 		return fb;
     }
 
-    protected Map<String,String> parse(String str){
+	protected Map<String,String> parse(String str){
+		JsonReader jsonReader = Json.createReader(new StringReader(str));
+		JsonObject jsonObject = jsonReader.readObject();
 		Map<String,String> map = new HashMap<>(2);
-		String[] items = str.split("&");
-		for(String item: items){
-			String[] arr = item.split("=");
-			if (arr.length>1 && arr[0] != null && arr[1] != null)
-				map.put(arr[0], arr[1]);
-		}
+		map.put("access_token", jsonObject.getString("access_token"));
+		map.put("token_type", jsonObject.getString("token_type"));
+		map.put("expires_in", String.valueOf(jsonObject.getInt("expires_in", 0)));
 		return map;
 	}
 
