@@ -37,10 +37,18 @@ public class OAuthProviders implements Serializable {
 
     public void errorRedirect(String error){
         if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO, "error=" + error);
+        if ( callback == null ) {
+            logger.warning("errorRedirect() Error: callback handler is not set!");
+            return;
+        }
         callback.onError(error);
     }
 
     public void success(String validatedId){
+        if ( callback == null ) {
+            logger.warning("success() Error: callback handler is not set!");
+            return;
+        }
         callback.onSuccess(validatedId, userAutoReqProps);
     }
 

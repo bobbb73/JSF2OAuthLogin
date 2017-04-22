@@ -95,10 +95,10 @@ public class YALogin implements OAuthProvider {
 			PersonData personData = decodePersonData(ret2);
 			
 			if (logger.isLoggable(Level.INFO)) {
+				logger.log(Level.INFO,"id="+personData.id);
 				logger.log(Level.INFO,"birthday="+personData.birthday);
 				logger.log(Level.INFO,"display_name="+personData.display_name);
 				logger.log(Level.INFO,"sex="+personData.sex);
-				logger.log(Level.INFO,"id="+personData.id);
 				logger.log(Level.INFO,"default_email="+personData.default_email);
 				logger.log(Level.INFO,"real_name="+personData.real_name);
 			}
@@ -110,14 +110,18 @@ public class YALogin implements OAuthProvider {
 				if (fname.length>1)	core.getUserAutoReqProps().setFirstName(fname[1]);
 				core.getUserAutoReqProps().setSex("male".equalsIgnoreCase(personData.sex));
 			}
+
 			try {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				core.getUserAutoReqProps().setBorn(dateFormat.parse(personData.birthday));
 			} catch(Exception ex) {
                 logger.log(Level.WARNING, "Error:", ex);
-            };
+            }
 
-			core.success("http://my.ya.ru/"+personData.id);
+			String successURL = "http://my.ya.ru/" + personData.id;
+			logger.info("success url:" + successURL);
+
+			core.success(successURL);
 		} else {
             core.errorRedirect("code is null!");
         }

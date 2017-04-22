@@ -152,7 +152,7 @@ public class ODLogin implements OAuthProvider {
         JsonObject jsonObject = jsonReader.readObject();
         od.access_token = jsonObject.getString("access_token");
         od.refresh_token = jsonObject.getString("refresh_token");
-        od.token_type = jsonObject.getString("token_type");
+        od.token_type = jsonObject.getString("token_type", "");
         return od;
     }
 

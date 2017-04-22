@@ -35,14 +35,13 @@ public class ODLoginTest {
 
     @Test
     public void decodeAccessTest(){
-        String json = "{\"access_token\":\"0ripa.1571dv2seq0052605469h5b3k6dsb\",\"refresh_token\":\"075405148641_86a4bf0a9c1d6f9cc4d3c7e8bde0596a1f_561421056e\",\"token_type\":\"session\",\"expires_in\":\"1800\"}";
+        String json = "{\"access_token\":\"f3ipa.1w3900402z3u65n3o3k71srvg465\",\"refresh_token\":\"b85964382941_a4bf0a9c1d6f9cc4d3c7e8bde0596a1f_56142105676c\",\"expires_in\":\"1800\"}";
         ODLogin destination = new ODLogin();
 
         ODLogin.OD od = destination.decodeAccess(json);
 
-        assertEquals("0ripa.1571dv2seq0052605469h5b3k6dsb", od.access_token);
-        assertEquals("075405148641_86a4bf0a9c1d6f9cc4d3c7e8bde0596a1f_561421056e", od.refresh_token);
-        assertEquals("session", od.token_type);
+        assertEquals("f3ipa.1w3900402z3u65n3o3k71srvg465", od.access_token);
+        assertEquals("b85964382941_a4bf0a9c1d6f9cc4d3c7e8bde0596a1f_56142105676c", od.refresh_token);
     }
 
     @Test
