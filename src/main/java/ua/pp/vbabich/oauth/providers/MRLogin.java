@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -158,28 +158,26 @@ public class MRLogin implements OAuthProvider {
 
 	protected MR decodeToken(String json) {
         MR mr = new MR();
-        JsonReader jsonReader = Json.createReader(new StringReader(json));
-        JsonObject jsonObject = jsonReader.readObject();
-        mr.access_token = jsonObject.getString("access_token");
-        mr.refresh_token = jsonObject.getString("refresh_token");
-        mr.expires_in = jsonObject.getInt("expires_in");
-        mr.token_type = jsonObject.getString("token_type");
-        mr.x_mailru_vid = jsonObject.getString("x_mailru_vid");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+        mr.access_token = JsonHelper.getStringValue(jsonObject, "access_token");
+        mr.refresh_token = JsonHelper.getStringValue(jsonObject, "refresh_token");
+        mr.expires_in = JsonHelper.getIntValue(jsonObject, "expires_in");
+        mr.token_type = JsonHelper.getStringValue(jsonObject, "token_type");
+        mr.x_mailru_vid = JsonHelper.getStringValue(jsonObject, "x_mailru_vid");
         return mr;
 	}
 
 	protected PersonData decodePersonData(String json) {
         PersonData personData = new PersonData();
-        JsonReader jsonReader = Json.createReader(new StringReader(json.substring(1)));
-        JsonObject jsonObject = jsonReader.readObject();
-        personData.nick = jsonObject.getString("nick");
-        personData.first_name = jsonObject.getString("first_name");
-        personData.last_name = jsonObject.getString("last_name");
-        personData.birthday = jsonObject.getString("birthday");
-        personData.link = jsonObject.getString("link");
-        personData.uid = jsonObject.getString("uid");
+		JsonObject jsonObject = Json.createReader(new StringReader(json.substring(1))).readObject();
+        personData.nick = JsonHelper.getStringValue(jsonObject, "nick");
+        personData.first_name = JsonHelper.getStringValue(jsonObject, "first_name");
+        personData.last_name = JsonHelper.getStringValue(jsonObject, "last_name");
+        personData.birthday = JsonHelper.getStringValue(jsonObject, "birthday");
+        personData.link = JsonHelper.getStringValue(jsonObject, "link");
+        personData.uid = JsonHelper.getStringValue(jsonObject, "uid");
         personData.sex = jsonObject.getInt("sex");
-        personData.email = jsonObject.getString("email");
+        personData.email = JsonHelper.getStringValue(jsonObject, "email");
         return personData;
 	}
 

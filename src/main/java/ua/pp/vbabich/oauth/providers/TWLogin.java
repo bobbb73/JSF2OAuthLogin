@@ -69,7 +69,7 @@ public class TWLogin implements OAuthProvider {
 		try {
 
 			// Получаем request token
-			String timestamp = new Long(System.currentTimeMillis()/1000).toString();
+			String timestamp = Long.toString(System.currentTimeMillis() / 1000);
 			String nonce = UUID.randomUUID().toString().replaceAll("-", "");
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() nonce="+nonce);
 			
@@ -98,7 +98,7 @@ public class TWLogin implements OAuthProvider {
 			reqProps.put("Authorization", sb.toString());
 			String ret = HttpURL.httpsPost(requestTokenURL, new Properties(), reqProps, "UTF-8");
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() ret="+ret);
-
+			if (ret == null) return null;
 			oauthToken = ret.substring(ret.indexOf("oauth_token=") + 12, ret.indexOf("&oauth_token_secret="));
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() oauthToken="+oauthToken);
 
@@ -124,7 +124,7 @@ public class TWLogin implements OAuthProvider {
 		try {
 
 			// Получаем access token
-			String timestamp = new Long(System.currentTimeMillis()/1000).toString();
+			String timestamp = Long.toString(System.currentTimeMillis() / 1000);
 			String nonce = UUID.randomUUID().toString().replaceAll("-", "");
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"phase2() nonce="+nonce);
 	

@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,29 +112,23 @@ public class FBLogin implements OAuthProvider {
 
     protected FB decodeResponse(String json){
         FB fb = new FB();
-		JsonReader jsonReader = Json.createReader(new StringReader(json));
-		JsonObject jsonObject = jsonReader.readObject();
-		fb.id = jsonObject.getString("id");
-        fb.name = jsonObject.getString("name");
-		try {
-			fb.link = jsonObject.getString("link");
-			fb.first_name = jsonObject.getString("first_name");
-			fb.last_name = jsonObject.getString("last_name");
-		} catch (Throwable th){
-			if (logger.isLoggable(Level.FINE)) logger.log(Level.FINE,"", th);
-		}
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+		fb.id = JsonHelper.getStringValue(jsonObject, "id");
+		fb.name = JsonHelper.getStringValue(jsonObject, "name");
+		fb.first_name = JsonHelper.getStringValue(jsonObject, "first_name");
+		fb.last_name = JsonHelper.getStringValue(jsonObject, "last_name");
+		fb.link = JsonHelper.getStringValue(jsonObject, "link");
 		if (fb.link==null)
 			fb.link = "https://www.facebook.com/app_scoped_user_id/"+fb.id+"/";
 		return fb;
     }
 
 	protected Map<String,String> parse(String str){
-		JsonReader jsonReader = Json.createReader(new StringReader(str));
-		JsonObject jsonObject = jsonReader.readObject();
+		JsonObject jsonObject = Json.createReader(new StringReader(str)).readObject();
 		Map<String,String> map = new HashMap<>(2);
-		map.put("access_token", jsonObject.getString("access_token"));
-		map.put("token_type", jsonObject.getString("token_type"));
-		map.put("expires_in", String.valueOf(jsonObject.getInt("expires_in", 0)));
+		map.put("access_token", JsonHelper.getStringValue(jsonObject, "access_token"));
+		map.put("token_type", JsonHelper.getStringValue(jsonObject, "token_type"));
+		map.put("expires_in", String.valueOf(JsonHelper.getIntValue(jsonObject, "expires_in", 0)));
 		return map;
 	}
 

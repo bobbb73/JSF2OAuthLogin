@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -148,24 +148,22 @@ public class ODLogin implements OAuthProvider {
 
     protected OD decodeAccess(String json) {
         OD od = new OD();
-        JsonReader jsonReader = Json.createReader(new StringReader(json));
-        JsonObject jsonObject = jsonReader.readObject();
-        od.access_token = jsonObject.getString("access_token");
-        od.refresh_token = jsonObject.getString("refresh_token");
-        od.token_type = jsonObject.getString("token_type", "");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+        od.access_token = JsonHelper.getStringValue(jsonObject, "access_token");
+        od.refresh_token = JsonHelper.getStringValue(jsonObject, "refresh_token");
+        od.token_type = JsonHelper.getStringValue(jsonObject, "token_type", "");
         return od;
     }
 
     protected PersonData decodePersonData(String json) {
         PersonData personData= new PersonData();
-        JsonReader jsonReader = Json.createReader(new StringReader(json));
-        JsonObject jsonObject = jsonReader.readObject();
-        personData.last_name = jsonObject.getString("last_name");
-        personData.first_name = jsonObject.getString("first_name");
-        personData.gender = jsonObject.getString("gender");
-        personData.birthday = jsonObject.getString("birthday");
-        personData.uid = jsonObject.getString("uid");
-        personData.age = jsonObject.getInt("age");;
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+        personData.last_name = JsonHelper.getStringValue(jsonObject, "last_name");
+        personData.first_name = JsonHelper.getStringValue(jsonObject, "first_name");
+        personData.gender = JsonHelper.getStringValue(jsonObject, "gender");
+        personData.birthday = JsonHelper.getStringValue(jsonObject, "birthday");
+        personData.uid = JsonHelper.getStringValue(jsonObject, "uid");
+        personData.age = JsonHelper.getIntValue(jsonObject, "age");
         return personData;
     }
 

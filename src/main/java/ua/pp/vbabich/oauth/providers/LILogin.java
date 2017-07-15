@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.StringReader;
 import java.util.Properties;
 import java.util.UUID;
@@ -114,10 +114,9 @@ public class LILogin implements OAuthProvider {
 
     protected Token decodeToken(String json) {
         Token token = new Token();
-        JsonReader jsonReader = Json.createReader(new StringReader(json));
-        JsonObject jsonObject = jsonReader.readObject();
-        token.access_token = jsonObject.getString("access_token");
-        token.expires_in = jsonObject.getInt("expires_in");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+        token.access_token = JsonHelper.getStringValue(jsonObject, "access_token");
+        token.expires_in = JsonHelper.getIntValue(jsonObject, "expires_in");
         return token;
     }
 

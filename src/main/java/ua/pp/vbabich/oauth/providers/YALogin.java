@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -130,25 +130,23 @@ public class YALogin implements OAuthProvider {
 
     protected YA decodeAccessCode(String json) {
         YA ya = new YA();
-		JsonReader jsonReader = Json.createReader(new StringReader(json));
-		JsonObject jsonObject = jsonReader.readObject();
-		ya.access_token = jsonObject.getString("access_token");
-		ya.token_type   = jsonObject.getString("token_type");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+		ya.access_token = JsonHelper.getStringValue(jsonObject, "access_token");
+		ya.token_type   = JsonHelper.getStringValue(jsonObject, "token_type");
 		return ya;
     }
 
     protected PersonData decodePersonData(String json) {
         PersonData personData = new PersonData();
-		JsonReader jsonReader = Json.createReader(new StringReader(json));
-		JsonObject jsonObject = jsonReader.readObject();
-		personData.birthday = jsonObject.getString("birthday");
-		personData.display_name = jsonObject.getString("display_name");
-		personData.sex = jsonObject.getString("sex");
-		personData.id = jsonObject.getString("id");
-		personData.default_email = jsonObject.getString("default_email");
-		personData.real_name = jsonObject.getString("real_name");
-		personData.first_name = jsonObject.getString("first_name");
-		personData.last_name = jsonObject.getString("last_name");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+		personData.birthday = JsonHelper.getStringValue(jsonObject, "birthday");
+		personData.display_name = JsonHelper.getStringValue(jsonObject, "display_name");
+		personData.sex = JsonHelper.getStringValue(jsonObject, "sex");
+		personData.id = JsonHelper.getStringValue(jsonObject, "id");
+		personData.default_email = JsonHelper.getStringValue(jsonObject, "default_email");
+		personData.real_name = JsonHelper.getStringValue(jsonObject, "real_name");
+		personData.first_name = JsonHelper.getStringValue(jsonObject, "first_name");
+		personData.last_name = JsonHelper.getStringValue(jsonObject, "last_name");
 		return personData;
     }
 

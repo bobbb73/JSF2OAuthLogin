@@ -23,18 +23,20 @@ public class OAuthDAO implements Serializable {
 		load();
 	}
 
-	public void load(){
+	public boolean load(){
 		try (FileInputStream fis = new FileInputStream(FacesContext.getCurrentInstance().getExternalContext().getInitParameter("OAuthPropertiesPath"))){
 			prop = new Properties();
 			prop.load(fis);
 			if (prop.isEmpty()) {
                 if (logger.isLoggable(Level.WARNING)) logger.log(Level.WARNING, "OAuthDAO prop is empty!");
-				return;
+				return false;
 			}
 			if (logger.isLoggable(Level.FINEST)) logger.log(Level.FINEST,"OAuthDAO properties loaded");
 		} catch (Exception ex) {
 			if (logger.isLoggable(Level.WARNING)) logger.log(Level.WARNING, "OAuthDAO properties load error:" + ex.getMessage());
+			return false;
 		}
+		return true;
 	}
 
 	public String getProperty(String key) {

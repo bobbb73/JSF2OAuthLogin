@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -150,35 +150,32 @@ public class GooLogin implements OAuthProvider {
 
     protected TokensPayload decodePayload(String json) {
         TokensPayload tp = new TokensPayload();
-		JsonReader jsonReader = Json.createReader(new StringReader(json));
-		JsonObject jsonObject = jsonReader.readObject();
-		tp.access_token = jsonObject.getString("access_token");
-		tp.token_type = jsonObject.getString("token_type");
-		tp.expires_in = jsonObject.getInt("expires_in");
-		tp.id_token = jsonObject.getString("id_token");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+		tp.access_token = JsonHelper.getStringValue(jsonObject, "access_token");
+		tp.token_type = JsonHelper.getStringValue(jsonObject, "token_type");
+		tp.expires_in = JsonHelper.getIntValue(jsonObject, "expires_in");
+		tp.id_token = JsonHelper.getStringValue(jsonObject, "id_token");
 		return tp;
     }
 
     protected Claims decodeClaims(String json) {
         Claims claims = new Claims();
-		JsonReader jsonReader = Json.createReader(new StringReader(json));
-		JsonObject jsonObject = jsonReader.readObject();
-		claims.iss = jsonObject.getString("iss");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+		claims.iss = JsonHelper.getStringValue(jsonObject, "iss");
 		claims.email_verified = jsonObject.getBoolean("email_verified");
-		claims.sub = jsonObject.getString("sub");
-		claims.aud = jsonObject.getString("aud");
-		claims.at_hash = jsonObject.getString("at_hash");
-		claims.email = jsonObject.getString("email");
-		claims.azp = jsonObject.getString("azp");
-		claims.iat = jsonObject.getInt("iat");
-		claims.exp = jsonObject.getInt("exp");
+		claims.sub = JsonHelper.getStringValue(jsonObject, "sub");
+		claims.aud = JsonHelper.getStringValue(jsonObject, "aud");
+		claims.at_hash = JsonHelper.getStringValue(jsonObject, "at_hash");
+		claims.email = JsonHelper.getStringValue(jsonObject, "email");
+		claims.azp = JsonHelper.getStringValue(jsonObject, "azp");
+		claims.iat = JsonHelper.getIntValue(jsonObject, "iat");
+		claims.exp = JsonHelper.getIntValue(jsonObject, "exp");
 		return claims;
     }
 
     protected PersonData decodePersonData(String json) {
         PersonData personData = new PersonData();
-		JsonReader jsonReader = Json.createReader(new StringReader(json));
-		JsonObject jsonObject = jsonReader.readObject();
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
 		personData.id = jsonObject.getString("id");
 		personData.email = jsonObject.getString("email");
 		personData.name = jsonObject.getString("name");

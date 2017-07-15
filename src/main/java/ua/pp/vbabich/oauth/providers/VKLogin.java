@@ -3,6 +3,7 @@ package ua.pp.vbabich.oauth.providers;
 import ua.pp.vbabich.oauth.OAuthProvider;
 import ua.pp.vbabich.oauth.OAuthProviders;
 import ua.pp.vbabich.oauth.util.HttpURL;
+import ua.pp.vbabich.oauth.util.JsonHelper;
 import ua.pp.vbabich.oauth.util.OAuthDAO;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -121,22 +121,20 @@ public class VKLogin implements OAuthProvider {
 
     protected Info decodeInfo(String json) {
         Info info = new Info();
-        JsonReader jsonReader = Json.createReader(new StringReader(json));
-        JsonObject jsonObject = jsonReader.readObject().getJsonArray("response").getJsonObject(0);
-        info.first_name = jsonObject.getString("first_name");
-        info.last_name = jsonObject.getString("last_name");
-        info.sex = jsonObject.getInt("sex");
-        info.bdate = jsonObject.getString("bdate");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject().getJsonArray("response").getJsonObject(0);
+        info.first_name = JsonHelper.getStringValue(jsonObject, "first_name");
+        info.last_name = JsonHelper.getStringValue(jsonObject, "last_name");
+        info.sex = JsonHelper.getIntValue(jsonObject, "sex");
+        info.bdate = JsonHelper.getStringValue(jsonObject, "bdate");
         return info;
     }
 
     protected VK decodeResponse(String json) {
 		VK vk = new VK();
-        JsonReader jsonReader = Json.createReader(new StringReader(json));
-        JsonObject jsonObject = jsonReader.readObject();
-        vk.access_token = jsonObject.getString("access_token");
-        vk.expires_in = jsonObject.getInt("expires_in");
-        vk.user_id = jsonObject.getInt("user_id");
+		JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
+        vk.access_token = JsonHelper.getStringValue(jsonObject, "access_token");
+        vk.expires_in = JsonHelper.getIntValue(jsonObject, "expires_in");
+        vk.user_id = JsonHelper.getIntValue(jsonObject, "user_id");
         return vk;
 	}
 
@@ -160,6 +158,13 @@ public class VKLogin implements OAuthProvider {
 		Integer user_id;
 		String error;
 		String info;
+	}
+
+	protected static String normalize(String str){
+		if (str.startsWith("["))
+			return str.substring(1, str.length()-1);
+		else
+			return str;
 	}
 
 	public String getCode() {
