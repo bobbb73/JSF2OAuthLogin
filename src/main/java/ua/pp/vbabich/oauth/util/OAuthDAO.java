@@ -16,15 +16,17 @@ public class OAuthDAO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Properties prop;
+	private String propertyPath;
 	private static Logger logger = Logger.getLogger(OAuthDAO.class.getName());
 
 	@PostConstruct
 	public void initialize() {
+		propertyPath = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("OAuthPropertiesPath");
 		load();
 	}
 
 	public boolean load(){
-		try (FileInputStream fis = new FileInputStream(FacesContext.getCurrentInstance().getExternalContext().getInitParameter("OAuthPropertiesPath"))){
+		try (FileInputStream fis = new FileInputStream(propertyPath)) {
 			prop = new Properties();
 			prop.load(fis);
 			if (prop.isEmpty()) {
@@ -33,7 +35,7 @@ public class OAuthDAO implements Serializable {
 			}
 			if (logger.isLoggable(Level.FINEST)) logger.log(Level.FINEST,"OAuthDAO properties loaded");
 		} catch (Exception ex) {
-			if (logger.isLoggable(Level.WARNING)) logger.log(Level.WARNING, "OAuthDAO properties load error:" + ex.getMessage());
+			if (logger.isLoggable(Level.WARNING)) logger.log(Level.WARNING, "OAuthDAO properties load error:", ex);
 			return false;
 		}
 		return true;
