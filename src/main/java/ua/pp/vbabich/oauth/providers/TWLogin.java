@@ -43,7 +43,8 @@ public class TWLogin implements OAuthProvider {
 
 	private String requestTokenURL;
 	private String accessTokenURL;
-	
+	private String callbackURL;
+
 	@PostConstruct
 	public void init(){
 		if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"init()");
@@ -51,9 +52,10 @@ public class TWLogin implements OAuthProvider {
 		consumerSecret = oauthDAO.getProperty("twConsumerSecret")+"&";
 		requestTokenURL = oauthDAO.getProperty("twRequestTokenURL");
 		accessTokenURL = oauthDAO.getProperty("twAccessTokenURL");
+		callbackURL = oauthDAO.getProperty("twCallbackURL");
 	}
-	
-	private String computeSignature(String baseString, String keyString) throws NoSuchAlgorithmException, InvalidKeyException {
+
+	protected String computeSignature(String baseString, String keyString) throws NoSuchAlgorithmException, InvalidKeyException {
 		SecretKey secretKey = null;
 		byte[] keyBytes = keyString.getBytes();
 		secretKey = new SecretKeySpec(keyBytes, "HmacSHA1");
@@ -74,30 +76,54 @@ public class TWLogin implements OAuthProvider {
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() nonce="+nonce);
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("oauth_consumer_key=");	sb.append(oauthConsumerKey);
+			sb.append("oauth_callback=");
+			sb.append(percentEncode(callbackURL));
+			sb.append("&oauth_consumer_key=");
+			sb.append(oauthConsumerKey);
 			sb.append("&oauth_nonce=");			sb.append(nonce);
 			sb.append("&oauth_signature_method=");	sb.append(oauthSignatureMethod);
 			sb.append("&oauth_timestamp=");		sb.append(timestamp);
-			sb.append("&oauth_version=");		sb.append(oauthVersion);
+			sb.append("&oauth_version=");
+			sb.append(oauthVersion);
 			
 			String signature = percentEncode(computeSignature("POST&" + percentEncode(requestTokenURL) + "&" + percentEncode(sb.toString()), consumerSecret));
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() signature="+signature);
 
 			sb = new StringBuilder();
 			sb.append("OAuth ");
+			sb.append("oauth_callback=");
+			sb.append('"');
+			sb.append(percentEncode(callbackURL));
+			sb.append('"');
+			sb.append(',');
 			sb.append("oauth_consumer_key=");	sb.append('"');		sb.append(oauthConsumerKey);	sb.append('"');		sb.append(',');
-			sb.append("oauth_signature_method=");	sb.append('"');	sb.append(oauthSignatureMethod);sb.append('"');		sb.append(',');
+			sb.append("oauth_nonce=");
+			sb.append('"');
+			sb.append(nonce);
+			sb.append('"');
+			sb.append(',');
+			sb.append("oauth_signature=");
+			sb.append('"');
+			sb.append(signature);
+			sb.append('"');
+			sb.append(',');
+			sb.append("oauth_signature_method=");
+			sb.append('"');
+			sb.append(oauthSignatureMethod);
+			sb.append('"');
+			sb.append(',');
 			sb.append("oauth_timestamp=");		sb.append('"');		sb.append(timestamp);			sb.append('"');		sb.append(',');
-			sb.append("oauth_nonce=");			sb.append('"');		sb.append(nonce);				sb.append('"');		sb.append(',');
-			sb.append("oauth_version=");		sb.append('"');		sb.append(oauthVersion);		sb.append('"');		sb.append(',');
-			sb.append("oauth_signature=");		sb.append('"');		sb.append(signature);			sb.append('"');
-			
+			sb.append("oauth_version=");
+			sb.append('"');
+			sb.append(oauthVersion);
+			sb.append('"');
+
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() Authorization="+sb.toString());
 			
 			Properties reqProps = new Properties();
 			reqProps.put("Authorization", sb.toString());
 			String ret = HttpURL.httpsPost(requestTokenURL, new Properties(), reqProps, "UTF-8");
-			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() ret="+ret);
+			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO, "authorize() ret=" + ret);
 			if (ret == null) return null;
 			oauthToken = ret.substring(ret.indexOf("oauth_token=") + 12, ret.indexOf("&oauth_token_secret="));
 			if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() oauthToken="+oauthToken);

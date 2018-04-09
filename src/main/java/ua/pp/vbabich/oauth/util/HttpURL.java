@@ -92,8 +92,8 @@ public class HttpURL {
 	        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 	        wr.write(data.toString());
 	        wr.flush();
-			
-		    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getResponseCode() < 400 ? conn.getInputStream() : conn.getErrorStream()));
 		    String line;
 		    while ((line = rd.readLine()) != null) ret.append(line);
 		    rd.close();

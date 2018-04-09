@@ -6,7 +6,7 @@
     <groupId>ua.pp.vbabich</groupId>
     <artifactId>jsf2-oauth</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5-SNAPSHOT</version>
     <name>OAuth2 Java autentification library</name>
     <url>http://www.vbabich.pp.ua</url>
 
@@ -34,6 +34,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.18.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
