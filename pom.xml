@@ -6,7 +6,7 @@
     <groupId>ua.pp.vbabich</groupId>
     <artifactId>jsf2-oauth</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.5</version>
     <name>OAuth2 Java autentification library</name>
     <url>http://www.vbabich.pp.ua</url>
 
