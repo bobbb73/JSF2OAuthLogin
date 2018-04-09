@@ -49,7 +49,7 @@ public class FBLogin implements OAuthProvider {
 		if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"FB authorize() - start");
 		code = null;
 		core.setState(UUID.randomUUID().toString().replaceAll("-", ""));
-		String plainUrl = "https://www.facebook.com/dialog/oauth?client_id="+ parmAppId +"&scope=user_about_me,user_status&redirect_uri="+ parmRedirectURL + "&state=" + core.getState();
+		String plainUrl = "https://www.facebook.com/dialog/oauth?client_id=" + parmAppId + "&scope=public_profile,email&redirect_uri=" + parmRedirectURL + "&state=" + core.getState();
 		if (logger.isLoggable(Level.INFO)) logger.log(Level.INFO,"authorize() plainUrl="+plainUrl);
 
 		try {
